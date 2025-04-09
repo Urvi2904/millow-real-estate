@@ -1,11 +1,18 @@
+//Express server with endpoints for handling properties and file uploads
+
+// Load required modules
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
+// Load environment variables
 dotenv.config();
+
+// Connect to MongoDB database
 connectDB();
 
+// Initialize Express app
 const app = express();
 
 app.use(cors());
