@@ -1,12 +1,17 @@
+/**
+ * Search - Provides a search bar to filter properties by address, city, etc
+ * Updates parent component's query state in real-time.
+ */
 import { useState } from 'react';
 
 const Search = ({ setSearchQuery }) => {
   const [input, setInput] = useState('');
 
+  //handleInput - Updates the input state and calls setSearchQuery to filter properties
   const handleInput = (e) => {
     const value = e.target.value;
     setInput(value);
-    setSearchQuery(value); // Updates parent state
+    setSearchQuery(value);
   };
 
   return (

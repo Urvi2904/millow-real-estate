@@ -1,9 +1,19 @@
+/**
+ * SellPropertyForm - Form for admin to list a new property to sell or rent.
+ * Sends data to backend and lists property on blockchain via Escrow smart contract.
+ */
 import { useState } from 'react';
-import { ethers } from 'ethers';
-import EscrowABI from '../abis/Escrow.json';
-import config from '../config.json';
 
-const SellPropertyForm = ({ account, listingType, setListingType, onClose, reloadHomes, resetSelection }) => {
+const SellPropertyForm = ({
+  account,
+  listingType,
+  setListingType,
+  onClose,
+  reloadHomes,
+  resetSelection,
+  escrow,
+}) => {
+  // Local state for form input values
   const [form, setForm] = useState({
     name: '',
     address: '',
@@ -13,51 +23,27 @@ const SellPropertyForm = ({ account, listingType, setListingType, onClose, reloa
     bedrooms: '',
     bathrooms: '',
     sqft: '',
-    year: ''
+    year: '',
   });
 
+  // Upload loading state
   const [uploading, setUploading] = useState(false);
 
+  // Handle form field changes
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: files ? files[0] : value
+      [name]: files ? files[0] : value,
     }));
   };
 
+  // handleSubmit - Submit form data to backend and blockchain
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!account) {
-      alert("⚠️ Please connect your wallet to continue.");
-      return;
-    }
-
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const { chainId } = await provider.getNetwork();
-      const escrowAddress = config[chainId]?.escrow?.address;
-
-      if (!escrowAddress) {
-        alert('❌ Escrow contract not found for this network.');
-        return;
-      }
-
-      // Simulate an NFT ID (could be replaced with real one later)
-      const nftId = Date.now();
-
-      // 🟢 Pay listing fee to Escrow smart contract
-      const escrow = new ethers.Contract(escrowAddress, EscrowABI, signer);
-      const tx = await escrow.depositEarnest(nftId, {
-        value: ethers.utils.parseEther('0.01')
-      });
-      await tx.wait();
-
-      // Convert "Sell" → "buy", "Rent" → "rent"
-      const listingValue = listingType.toLowerCase() === 'sell' ? 'buy' : 'rent';
-
+      //Prepare NFT metadata as attributes
       const attributes = [
         { trait_type: 'Purchase Price', value: parseFloat(form.price) },
         { trait_type: 'Type of Residence', value: 'Custom' },
@@ -65,9 +51,13 @@ const SellPropertyForm = ({ account, listingType, setListingType, onClose, reloa
         { trait_type: 'Bathrooms', value: parseInt(form.bathrooms) },
         { trait_type: 'Square Feet', value: parseInt(form.sqft) },
         { trait_type: 'Year Built', value: parseInt(form.year) },
-        { trait_type: 'Listing Type', value: listingValue }
+        {
+          trait_type: 'Listing Type',
+          value: listingType.toLowerCase() === 'sell' ? 'buy' : 'rent',
+        },
       ];
 
+      //Final payload
       const payload = {
         name: form.name,
         address: form.address,
@@ -76,62 +66,141 @@ const SellPropertyForm = ({ account, listingType, setListingType, onClose, reloa
         owner: account,
       };
 
+      // Create FormData object to send image and metadata
       const formData = new FormData();
       formData.append('data', JSON.stringify(payload));
       formData.append('image', form.image);
 
       setUploading(true);
+
+      //Send to backend API
       const res = await fetch('http://localhost:5000/api/properties', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
-      const data = await res.json();
+      const result = await res.json();
       setUploading(false);
 
-      if (res.ok) {
-        alert('✅ Property submitted successfully!');
-        if (resetSelection) resetSelection();
-        if (reloadHomes) reloadHomes();
-        if (onClose) onClose();
-      } else {
-        alert('❌ Failed to submit property.');
-        console.error(data);
+      if (!res.ok || !result.tokenId) {
+        alert('❌ Property was not fully saved. No token ID returned.');
+        console.error('⚠️ Server response:', result);
+        return;
       }
 
+      // Register property on blockchain smart contract
+      try {
+        const tx = await escrow.listProperty(result.tokenId, account, account);
+        await tx.wait();
+        alert('✅ Property saved to blockchain and backend!');
+      } catch (contractError) {
+        console.error('❌ Blockchain listing failed:', contractError);
+        alert(
+          '❌ Property saved to DB, but listing on blockchain failed. Contact admin.',
+        );
+      }
+
+      //Reset UI state
+      if (resetSelection) resetSelection();
+      if (reloadHomes) reloadHomes();
+      if (onClose) onClose();
     } catch (err) {
-      console.error("❌ Error during property submission:", err);
-      alert('❌ Submission failed or transaction was rejected.');
+      console.error('❌ Submit error:', err);
+      alert('❌ Something went wrong during submission.');
+      setUploading(false);
     }
   };
 
+  //JSX : Form for admin to list a new property to sell or rent
   return (
     <form className="sell-property-form" onSubmit={handleSubmit}>
       <h2>Submit Your Property ({listingType})</h2>
 
-      <label>
-        Listing Type:
-        <select
-          name="listingType"
-          value={listingType}
-          onChange={(e) => setListingType(e.target.value)}
-        >
-          <option value="Sell">Sell</option>
-          <option value="Rent">Rent</option>
-        </select>
-      </label>
+      <select
+        name="listingType"
+        value={listingType}
+        onChange={(e) => setListingType(e.target.value)}
+      >
+        <option value="Sell">Sell</option>
+        <option value="Rent">Rent</option>
+      </select>
 
-      <input name="name" placeholder="Property Title" value={form.name} onChange={handleChange} required />
-      <input name="address" placeholder="Address" value={form.address} onChange={handleChange} required />
-      <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
-      <input name="price" type="number" placeholder="Price (ETH)" value={form.price} onChange={handleChange} required />
-      <input name="bedrooms" type="number" placeholder="Bedrooms" value={form.bedrooms} onChange={handleChange} required />
-      <input name="bathrooms" type="number" placeholder="Bathrooms" value={form.bathrooms} onChange={handleChange} required />
-      <input name="sqft" type="number" placeholder="Square Feet" value={form.sqft} onChange={handleChange} required />
-      <input name="year" type="number" placeholder="Year Built" value={form.year} onChange={handleChange} required />
-      <input name="image" type="file" accept="image/*" onChange={handleChange} required />
+      <input
+        name="name"
+        placeholder="Property Title"
+        value={form.name}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="address"
+        placeholder="Address"
+        value={form.address}
+        onChange={handleChange}
+        required
+      />
+      <textarea
+        name="description"
+        placeholder="Description"
+        value={form.description}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="price"
+        type="number"
+        placeholder="Price (ETH)"
+        value={form.price}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="bedrooms"
+        type="number"
+        placeholder="Bedrooms"
+        value={form.bedrooms}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="bathrooms"
+        type="number"
+        placeholder="Bathrooms"
+        value={form.bathrooms}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="sqft"
+        type="number"
+        placeholder="Square Feet"
+        value={form.sqft}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="year"
+        type="number"
+        placeholder="Year Built"
+        value={form.year}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="image"
+        type="file"
+        accept="image/*"
+        onChange={handleChange}
+        required
+      />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '10px',
+        }}
+      >
         <button type="submit" disabled={uploading} className="submit-btn">
           {uploading ? 'Submitting...' : 'Submit Property'}
         </button>
@@ -139,14 +208,7 @@ const SellPropertyForm = ({ account, listingType, setListingType, onClose, reloa
           type="button"
           onClick={onClose}
           className="cancel-btn"
-          style={{
-            backgroundColor: '#777',
-            color: 'white',
-            border: 'none',
-            padding: '10px 20px',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
+          style={{ backgroundColor: '#777', color: 'white' }}
         >
           Cancel
         </button>

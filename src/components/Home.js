@@ -1,691 +1,249 @@
-// import { ethers } from 'ethers';
-// import { useEffect, useState } from 'react';
-
-// import close from '../assets/close.svg';
-
-// const Home = ({ home, provider, account, escrow, togglePop }) => {
-//     const [hasBought, setHasBought] = useState(false)
-//     const [hasLended, setHasLended] = useState(false)
-//     const [hasInspected, setHasInspected] = useState(false)
-//     const [hasSold, setHasSold] = useState(false)
-
-//     const [buyer, setBuyer] = useState(null)
-//     const [lender, setLender] = useState(null)
-//     const [inspector, setInspector] = useState(null)
-//     const [seller, setSeller] = useState(null)
-
-//     const [owner, setOwner] = useState(null)
-
-//     const fetchDetails = async () => {
-//         // -- Buyer
-
-//         const buyer = await escrow.buyer(home.id)
-//         setBuyer(buyer)
-
-//         const hasBought = await escrow.approval(home.id, buyer)
-//         setHasBought(hasBought)
-
-//         // -- Seller
-
-//         const seller = await escrow.seller()
-//         setSeller(seller)
-
-//         const hasSold = await escrow.approval(home.id, seller)
-//         setHasSold(hasSold)
-
-//         // -- Lender
-
-//         const lender = await escrow.lender()
-//         setLender(lender)
-
-//         const hasLended = await escrow.approval(home.id, lender)
-//         setHasLended(hasLended)
-
-//         // -- Inspector
-
-//         const inspector = await escrow.inspector()
-//         setInspector(inspector)
-
-//         const hasInspected = await escrow.inspectionPassed(home.id)
-//         setHasInspected(hasInspected)
-//     }
-
-//     const fetchOwner = async () => {
-//         if (await escrow.isListed(home.id)) return
-
-//         const owner = await escrow.buyer(home.id)
-//         setOwner(owner)
-//     }
-
-//     const buyHandler = async () => {
-//         const escrowAmount = await escrow.escrowAmount(home.id)
-//         const signer = await provider.getSigner()
-
-//         // Buyer deposit earnest
-//         let transaction = await escrow.connect(signer).depositEarnest(home.id, { value: escrowAmount })
-//         await transaction.wait()
-
-//         // Buyer approves...
-//         transaction = await escrow.connect(signer).approveSale(home.id)
-//         await transaction.wait()
-
-//         setHasBought(true)
-//     }
-
-//     const inspectHandler = async () => {
-//         const signer = await provider.getSigner()
-
-//         // Inspector updates status
-//         const transaction = await escrow.connect(signer).updateInspectionStatus(home.id, true)
-//         await transaction.wait()
-
-//         setHasInspected(true)
-//     }
-
-//     const lendHandler = async () => {
-//         const signer = await provider.getSigner()
-
-//         // Lender approves...
-//         const transaction = await escrow.connect(signer).approveSale(home.id)
-//         await transaction.wait()
-
-//         // Lender sends funds to contract...
-//         const lendAmount = (await escrow.purchasePrice(home.id) - await escrow.escrowAmount(home.id))
-//         await signer.sendTransaction({ to: escrow.address, value: lendAmount.toString(), gasLimit: 60000 })
-
-//         setHasLended(true)
-//     }
-
-//     const sellHandler = async () => {
-//         const signer = await provider.getSigner()
-
-//         // Seller approves...
-//         let transaction = await escrow.connect(signer).approveSale(home.id)
-//         await transaction.wait()
-
-//         // Seller finalize...
-//         transaction = await escrow.connect(signer).finalizeSale(home.id)
-//         await transaction.wait()
-
-//         setHasSold(true)
-//     }
-
-//     useEffect(() => {
-//         fetchDetails()
-//         fetchOwner()
-//     }, [hasSold])
-
-//     return (
-//         <div className="home">
-//             <div className='home__details'>
-//                 <div className="home__image">
-//                     <img src={home.image} alt="Home" />
-//                 </div>
-//                 <div className="home__overview">
-//                     <h1>{home.name}</h1>
-//                     <p>
-//                         <strong>{home.attributes[2].value}</strong> bds |
-//                         <strong>{home.attributes[3].value}</strong> ba |
-//                         <strong>{home.attributes[4].value}</strong> sqft
-//                     </p>
-//                     <p>{home.address}</p>
-
-//                     <h2>{home.attributes[0].value} ETH</h2>
-
-//                     {owner ? (
-//                         <div className='home__owned'>
-//                             Owned by {owner.slice(0, 6) + '...' + owner.slice(38, 42)}
-//                         </div>
-//                     ) : (
-//                         <div>
-//                             {(account === inspector) ? (
-//                                 <button className='home__buy' onClick={inspectHandler} disabled={hasInspected}>
-//                                     Approve Inspection
-//                                 </button>
-//                             ) : (account === lender) ? (
-//                                 <button className='home__buy' onClick={lendHandler} disabled={hasLended}>
-//                                     Approve & Lend
-//                                 </button>
-//                             ) : (account === seller) ? (
-//                                 <button className='home__buy' onClick={sellHandler} disabled={hasSold}>
-//                                     Approve & Sell
-//                                 </button>
-//                             ) : (
-//                                 <button className='home__buy' onClick={buyHandler} disabled={hasBought}>
-//                                     Buy
-//                                 </button>
-//                             )}
-
-//                             <button className='home__contact' onClick={() => alert('Agent will contact you soon!')}>
-//                                  Contact agent
-//                             </button>
-//                         </div>
-//                     )}
-
-//                     <hr />
-
-//                     <h2>Overview</h2>
-
-//                     <p>
-//                         {home.description}
-//                     </p>
-
-//                     <hr />
-
-//                     <h2>Facts and features</h2>
-
-//                     <ul>
-//                         {home.attributes.map((attribute, index) => (
-//                             <li key={index}><strong>{attribute.trait_type}</strong> : {attribute.value}</li>
-//                         ))}
-//                     </ul>
-//                 </div>
-
-
-//                 <button onClick={togglePop} className="home__close">
-//                     <img src={close} alt="Close" />
-//                 </button>
-//             </div>
-//         </div >
-//     );
-// }
-
-// export default Home;
-//-------------------------------------------------------- 1 april -------
-
-
-// import { ethers } from 'ethers';
-// import { useEffect, useState } from 'react';
-
-// import close from '../assets/close.svg';
-
-// const Home = ({ home, provider, account, escrow, togglePop }) => {
-//   const [hasBought, setHasBought] = useState(false);
-//   const [hasLended, setHasLended] = useState(false);
-//   const [hasInspected, setHasInspected] = useState(false);
-//   const [hasSold, setHasSold] = useState(false);
-
-//   const [buyer, setBuyer] = useState(null);
-//   const [lender, setLender] = useState(null);
-//   const [inspector, setInspector] = useState(null);
-//   const [seller, setSeller] = useState(null);
-//   const [owner, setOwner] = useState(null);
-
-//   const fetchDetails = async () => {
-//     const buyer = await escrow.buyer(home.id);
-//     setBuyer(buyer);
-//     const hasBought = await escrow.approval(home.id, buyer);
-//     setHasBought(hasBought);
-
-//     const seller = await escrow.seller();
-//     setSeller(seller);
-//     const hasSold = await escrow.approval(home.id, seller);
-//     setHasSold(hasSold);
-
-//     const lender = await escrow.lender();
-//     setLender(lender);
-//     const hasLended = await escrow.approval(home.id, lender);
-//     setHasLended(hasLended);
-
-//     const inspector = await escrow.inspector();
-//     setInspector(inspector);
-//     const hasInspected = await escrow.inspectionPassed(home.id);
-//     setHasInspected(hasInspected);
-//   };
-
-//   const fetchOwner = async () => {
-//     if (await escrow.isListed(home.id)) return;
-//     const owner = await escrow.buyer(home.id);
-//     setOwner(owner);
-//   };
-
-//   const buyHandler = async () => {
-//     const escrowAmount = await escrow.escrowAmount(home.id);
-//     const signer = await provider.getSigner();
-//     let transaction = await escrow.connect(signer).depositEarnest(home.id, {
-//       value: escrowAmount
-//     });
-//     await transaction.wait();
-//     transaction = await escrow.connect(signer).approveSale(home.id);
-//     await transaction.wait();
-//     setHasBought(true);
-//   };
-
-//   const inspectHandler = async () => {
-//     const signer = await provider.getSigner();
-//     const transaction = await escrow.connect(signer).updateInspectionStatus(home.id, true);
-//     await transaction.wait();
-//     setHasInspected(true);
-//   };
-
-//   const lendHandler = async () => {
-//     const signer = await provider.getSigner();
-//     const transaction = await escrow.connect(signer).approveSale(home.id);
-//     await transaction.wait();
-//     const lendAmount = (await escrow.purchasePrice(home.id) - await escrow.escrowAmount(home.id));
-//     await signer.sendTransaction({ to: escrow.address, value: lendAmount.toString(), gasLimit: 60000 });
-//     setHasLended(true);
-//   };
-
-//   const sellHandler = async () => {
-//     const signer = await provider.getSigner();
-//     let transaction = await escrow.connect(signer).approveSale(home.id);
-//     await transaction.wait();
-//     transaction = await escrow.connect(signer).finalizeSale(home.id);
-//     await transaction.wait();
-//     setHasSold(true);
-//   };
-
-//   useEffect(() => {
-//     fetchDetails();
-//     fetchOwner();
-//   }, [hasSold]);
-
-//   return (
-//     <div className="home">
-//       <div className='home__details'>
-//         <div className="home__image">
-//           <img src={home.image} alt="Home" />
-//         </div>
-
-//         <div className="home__overview">
-//           <h1>{home.name}</h1>
-//           <p>
-//             <strong>{home.attributes[2].value}</strong> bds |
-//             <strong>{home.attributes[3].value}</strong> ba |
-//             <strong>{home.attributes[4].value}</strong> sqft
-//           </p>
-//           <p>{home.address}</p>
-//           <h2>{home.attributes[0].value} ETH</h2>
-
-//           {owner ? (
-//             <div className='home__owned'>
-//               Owned by {owner.slice(0, 6) + '...' + owner.slice(38, 42)}
-//             </div>
-//           ) : (
-//             <div>
-//               {account === inspector ? (
-//                 <button className='home__buy' onClick={inspectHandler} disabled={hasInspected}>
-//                   Approve Inspection
-//                 </button>
-//               ) : account === lender ? (
-//                 <button className='home__buy' onClick={lendHandler} disabled={hasLended}>
-//                   Approve & Lend
-//                 </button>
-//               ) : account === seller ? (
-//                 <button className='home__buy' onClick={sellHandler} disabled={hasSold}>
-//                   Approve & Sell
-//                 </button>
-//               ) : (
-//                 <button className='home__buy' onClick={buyHandler} disabled={hasBought}>
-//                   Buy
-//                 </button>
-//               )}
-//             </div>
-//           )}
-
-//           {/* ✅ Always Show Contact Agent Button */}
-//           <button className='home__contact' onClick={() => alert(`An agent for ${home.address} will contact you soon!`)}>
-//             📩 Contact agent
-//           </button>
-
-//           <hr />
-
-//           <h2>Overview</h2>
-//           <p>{home.description}</p>
-
-//           <hr />
-
-//           <h2>Facts and features</h2>
-//           <ul>
-//             {home.attributes.map((attribute, index) => (
-//               <li key={index}><strong>{attribute.trait_type}</strong> : {attribute.value}</li>
-//             ))}
-//           </ul>
-//         </div>
-
-//         <button onClick={togglePop} className="home__close">
-//           <img src={close} alt="Close" />
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Home;
-
-
-//-------------------------------- 1 april-----
-
-// import { ethers } from 'ethers';
-// import { useEffect, useState } from 'react';
-
-// import close from '../assets/close.svg';
-
-// const Home = ({ home, provider, account, escrow, togglePop }) => {
-//   const [hasBought, setHasBought] = useState(false);
-//   const [hasLended, setHasLended] = useState(false);
-//   const [hasInspected, setHasInspected] = useState(false);
-//   const [hasSold, setHasSold] = useState(false);
-
-//   const [buyer, setBuyer] = useState(null);
-//   const [lender, setLender] = useState(null);
-//   const [inspector, setInspector] = useState(null);
-//   const [seller, setSeller] = useState(null);
-//   const [owner, setOwner] = useState(null);
-
-//   const isBuy = home.attributes?.find(attr => attr.trait_type === "Listing Type")?.value?.toLowerCase() === 'buy';
-
-//   const fetchDetails = async () => {
-//     if (!escrow || !isBuy) return;
-//     const buyer = await escrow.buyer(home.id);
-//     setBuyer(buyer);
-//     const hasBought = await escrow.approval(home.id, buyer);
-//     setHasBought(hasBought);
-
-//     const seller = await escrow.seller();
-//     setSeller(seller);
-//     const hasSold = await escrow.approval(home.id, seller);
-//     setHasSold(hasSold);
-
-//     const lender = await escrow.lender();
-//     setLender(lender);
-//     const hasLended = await escrow.approval(home.id, lender);
-//     setHasLended(hasLended);
-
-//     const inspector = await escrow.inspector();
-//     setInspector(inspector);
-//     const hasInspected = await escrow.inspectionPassed(home.id);
-//     setHasInspected(hasInspected);
-//   };
-
-//   const fetchOwner = async () => {
-//     if (!escrow || !isBuy) return;
-//     if (await escrow.isListed(home.id)) return;
-//     const owner = await escrow.buyer(home.id);
-//     setOwner(owner);
-//   };
-
-//   const buyHandler = async () => {
-//     if (!escrow) return;
-//     const escrowAmount = await escrow.escrowAmount(home.id);
-//     const signer = await provider.getSigner();
-//     let transaction = await escrow.connect(signer).depositEarnest(home.id, {
-//       value: escrowAmount
-//     });
-//     await transaction.wait();
-//     transaction = await escrow.connect(signer).approveSale(home.id);
-//     await transaction.wait();
-//     setHasBought(true);
-//   };
-
-//   const inspectHandler = async () => {
-//     const signer = await provider.getSigner();
-//     const transaction = await escrow.connect(signer).updateInspectionStatus(home.id, true);
-//     await transaction.wait();
-//     setHasInspected(true);
-//   };
-
-//   const lendHandler = async () => {
-//     const signer = await provider.getSigner();
-//     const transaction = await escrow.connect(signer).approveSale(home.id);
-//     await transaction.wait();
-//     const lendAmount = (await escrow.purchasePrice(home.id) - await escrow.escrowAmount(home.id));
-//     await signer.sendTransaction({ to: escrow.address, value: lendAmount.toString(), gasLimit: 60000 });
-//     setHasLended(true);
-//   };
-
-//   const sellHandler = async () => {
-//     const signer = await provider.getSigner();
-//     let transaction = await escrow.connect(signer).approveSale(home.id);
-//     await transaction.wait();
-//     transaction = await escrow.connect(signer).finalizeSale(home.id);
-//     await transaction.wait();
-//     setHasSold(true);
-//   };
-
-//   useEffect(() => {
-//     fetchDetails();
-//     fetchOwner();
-//   }, [hasSold]);
-
-//   return (
-//     <div className="home">
-//       <div className='home__details'>
-//         <div className="home__image">
-//           <img src={home.image} alt="Home" />
-//         </div>
-
-//         <div className="home__overview">
-//           <h1>{home.name}</h1>
-//           <p>
-//             <strong>{home.attributes?.[2]?.value || "?"}</strong> bds |
-//             <strong>{home.attributes?.[3]?.value || "?"}</strong> ba |
-//             <strong>{home.attributes?.[4]?.value || "?"}</strong> sqft
-//           </p>
-//           <p>{home.address}</p>
-//           <h2>{home.attributes?.[0]?.value || "?"} ETH</h2>
-
-//           {owner ? (
-//             <div className='home__owned'>
-//               Owned by {owner.slice(0, 6) + '...' + owner.slice(38, 42)}
-//             </div>
-//           ) : (
-//             <>
-//               {isBuy && account && escrow && (
-//                 <div>
-//                   {account === inspector ? (
-//                     <button className='home__buy' onClick={inspectHandler} disabled={hasInspected}>
-//                       Approve Inspection
-//                     </button>
-//                   ) : account === lender ? (
-//                     <button className='home__buy' onClick={lendHandler} disabled={hasLended}>
-//                       Approve & Lend
-//                     </button>
-//                   ) : account === seller ? (
-//                     <button className='home__buy' onClick={sellHandler} disabled={hasSold}>
-//                       Approve & Sell
-//                     </button>
-//                   ) : (
-//                     <button className='home__buy' onClick={buyHandler} disabled={hasBought}>
-//                       Buy
-//                     </button>
-//                   )}
-//                 </div>
-//               )}
-//             </>
-//           )}
-
-//           <button className='home__contact' onClick={() => alert(`An agent for ${home.address} will contact you soon!`)}>
-//             📩 Contact agent
-//           </button>
-
-//           <hr />
-//           <h2>Overview</h2>
-//           <p>{home.description}</p>
-
-//           <hr />
-//           <h2>Facts and features</h2>
-//           <ul>
-//             {(home.attributes || []).map((attribute, index) => (
-//               <li key={index}><strong>{attribute.trait_type}</strong>: {attribute.value}</li>
-//             ))}
-//           </ul>
-//         </div>
-
-//         <button onClick={togglePop} className="home__close">
-//           <img src={close} alt="Close" />
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Home;
-
-import { ethers } from 'ethers';
+/**
+ * Home - Modal popup displaying detailed property information.
+ * Provides interaction buttons (Buy, Approve, Finalize) based on user role and transaction status.
+ */
+
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-
+import { ethers } from 'ethers';
 import close from '../assets/close.svg';
 import ContactAgentForm from './ContactAgentForm';
+import CustomConfirmModal from './CustomConfirmModal';
 
 const Home = ({ home, provider, account, escrow, togglePop }) => {
+  // Blockchain transaction states
   const [hasBought, setHasBought] = useState(false);
-  const [hasLended, setHasLended] = useState(false);
   const [hasInspected, setHasInspected] = useState(false);
-  const [hasSold, setHasSold] = useState(false);
-
-  const [buyer, setBuyer] = useState(null);
-  const [lender, setLender] = useState(null);
-  const [inspector, setInspector] = useState(null);
-  const [seller, setSeller] = useState(null);
+  const [hasApproved, setHasApproved] = useState(false);
+  const [hasFinalized, setHasFinalized] = useState(false);
   const [owner, setOwner] = useState(null);
 
-  const [showContactForm, setShowContactForm] = useState(false);
-  const [showVisitForm, setShowVisitForm] = useState(false);
+  //Information  from escrow contract
+  const [inspector, setInspector] = useState(null);
+  const [buyer, setBuyer] = useState(null);
 
-  const isBuy = home.attributes?.find(attr => attr.trait_type === "Listing Type")?.value?.toLowerCase() === 'buy';
-  const isRentOrSell = ['rent', 'sell'].includes(
-    home.attributes?.find(attr => attr.trait_type === "Listing Type")?.value?.toLowerCase()
-  );
+  //UI controls
+  const [showForm, setShowForm] = useState(false);
+  const [formType, setFormType] = useState(null);
+  const [showBuyConfirm, setShowBuyConfirm] = useState(false);
 
-  const fetchDetails = async () => {
-    if (!escrow || !isBuy) return;
-    const buyer = await escrow.buyer(home.id);
-    setBuyer(buyer);
-    const hasBought = await escrow.approval(home.id, buyer);
-    setHasBought(hasBought);
+  // Determine user role and listing type
+  const userRole = localStorage.getItem('userRole');
+  const isAdmin = userRole === 'admin';
+  const isBuy =
+    home.attributes
+      ?.find((attr) => attr.trait_type === 'Listing Type')
+      ?.value?.toLowerCase() === 'buy';
 
-    const seller = await escrow.seller();
-    setSeller(seller);
-    const hasSold = await escrow.approval(home.id, seller);
-    setHasSold(hasSold);
-
-    const lender = await escrow.lender();
-    setLender(lender);
-    const hasLended = await escrow.approval(home.id, lender);
-    setHasLended(hasLended);
-
-    const inspector = await escrow.inspector();
-    setInspector(inspector);
-    const hasInspected = await escrow.inspectionPassed(home.id);
-    setHasInspected(hasInspected);
-  };
-
-  const fetchOwner = async () => {
-    if (!escrow || !isBuy) return;
-    if (await escrow.isListed(home.id)) return;
-    const owner = await escrow.buyer(home.id);
-    setOwner(owner);
-  };
-
-  const buyHandler = async () => {
-    if (!escrow) return;
-    const escrowAmount = await escrow.escrowAmount(home.id);
-    const signer = await provider.getSigner();
-    let transaction = await escrow.connect(signer).depositEarnest(home.id, {
-      value: escrowAmount
-    });
-    await transaction.wait();
-    transaction = await escrow.connect(signer).approveSale(home.id);
-    await transaction.wait();
-    setHasBought(true);
-  };
-
-  const inspectHandler = async () => {
-    const signer = await provider.getSigner();
-    const transaction = await escrow.connect(signer).updateInspectionStatus(home.id, true);
-    await transaction.wait();
-    setHasInspected(true);
-  };
-
-  const lendHandler = async () => {
-    const signer = await provider.getSigner();
-    const transaction = await escrow.connect(signer).approveSale(home.id);
-    await transaction.wait();
-    const lendAmount = (await escrow.purchasePrice(home.id) - await escrow.escrowAmount(home.id));
-    await signer.sendTransaction({ to: escrow.address, value: lendAmount.toString(), gasLimit: 60000 });
-    setHasLended(true);
-  };
-
-  const sellHandler = async () => {
-    const signer = await provider.getSigner();
-    let transaction = await escrow.connect(signer).approveSale(home.id);
-    await transaction.wait();
-    transaction = await escrow.connect(signer).finalizeSale(home.id);
-    await transaction.wait();
-    setHasSold(true);
-  };
-
+  // Load property transaction status from blockchain
   useEffect(() => {
-    fetchDetails();
-    fetchOwner();
-  }, [hasSold]);
+    fetchStatus();
+  }, [hasBought, hasInspected, hasApproved, hasFinalized]);
 
+  //fetchStatus - Loads buyer, inspection, approval, and finalization states from the blockchain
+  const fetchStatus = async () => {
+    if (!escrow || !home || !home.tokenId) return;
+
+    try {
+      const tokenId = home.tokenId.toString();
+      const buyer = await escrow.buyer(tokenId);
+      setBuyer(buyer);
+
+      const approved = await escrow.approval(tokenId, buyer);
+      setHasApproved(approved);
+
+      const inspected = await escrow.inspectionPassed(tokenId);
+      setHasInspected(inspected);
+
+      const inspector = await escrow.inspector(tokenId);
+      setInspector(inspector);
+
+      setHasBought(buyer !== ethers.constants.AddressZero);
+
+      const currentOwner = await escrow.owner(tokenId);
+      if (currentOwner && currentOwner !== ethers.constants.AddressZero) {
+        setOwner(currentOwner);
+      }
+
+      const finalized = await escrow.saleFinalized(tokenId);
+      setHasFinalized(finalized || false);
+    } catch (err) {
+      console.warn('❌ Error fetching status:', err);
+    }
+  };
+
+  //buyHandler - Called when a user buys the property (sends earnest deposit)
+  const buyHandler = async () => {
+    try {
+      const tokenId = ethers.BigNumber.from(home.tokenId);
+      const signer = provider.getSigner();
+
+      const priceAttr = home.attributes?.find(
+        (attr) => attr.trait_type?.toLowerCase() === 'purchase price',
+      );
+
+      const rawPrice = priceAttr?.value;
+      if (!rawPrice) return alert('❌ Missing price!');
+
+      const price = ethers.utils.parseEther(rawPrice.toString());
+
+      const tx = await escrow.connect(signer).depositEarnest(tokenId, {
+        value: price,
+      });
+
+      await tx.wait();
+      setHasBought(true);
+    } catch (err) {
+      console.error('❌ Error in buyHandler:', err);
+    }
+  };
+
+  //inspectionHandler - Admin approves inspection for the property and finalize sale
+  const inspectionHandler = async () => {
+    try {
+      const tokenId = ethers.BigNumber.from(home.tokenId);
+      const signer = provider.getSigner();
+      const tx = await escrow
+        .connect(signer)
+        .updateInspectionStatus(tokenId, true);
+      await tx.wait();
+      setHasInspected(true);
+    } catch (err) {
+      console.error('❌ Error in inspectionHandler:', err);
+    }
+  };
+
+  //Approve sale
+  const approveHandler = async () => {
+    try {
+      const tokenId = ethers.BigNumber.from(home.tokenId);
+      const signer = provider.getSigner();
+      const tx = await escrow.connect(signer).approveSale(tokenId);
+      await tx.wait();
+      setHasApproved(true);
+    } catch (err) {
+      console.error('❌ Error in approveHandler:', err);
+    }
+  };
+
+  // Finalize sale
+  const finalizeHandler = async () => {
+    try {
+      const tokenId = ethers.BigNumber.from(home.tokenId);
+      const signer = provider.getSigner();
+      const tx = await escrow.connect(signer).finalizeSale(tokenId);
+      await tx.wait();
+      setHasFinalized(true);
+    } catch (err) {
+      console.error('❌ Error in finalizeHandler:', err);
+    }
+  };
+
+  //JSX rendering
   return (
     <div className="home">
-      <div className='home__details'>
+      <div className="home__details">
         <div className="home__image">
-          {/* <img src={home.image} alt="Home" /> */}
           <img
-  src={
-    home.image?.startsWith('http')
-      ? home.image
-      : `http://localhost:5000${home.image}`
-  }
-  alt="Home"
-/>
-
+            src={
+              home.image?.startsWith('http')
+                ? home.image
+                : `http://localhost:5000${home.image}`
+            }
+            alt="Home"
+          />
         </div>
 
         <div className="home__overview">
-          <h1>{home.name}</h1>
+          <div className="home__header">
+            <h1>{home.name}</h1>
+            {!isAdmin && isBuy && !hasBought && (
+              <button
+                className="home__buy inline-buy"
+                onClick={() => setShowBuyConfirm(true)}
+              >
+                Buy
+              </button>
+            )}
+          </div>
+
           <p>
-            <strong>{home.attributes?.[2]?.value || "?"}</strong> bds |
-            <strong>{home.attributes?.[3]?.value || "?"}</strong> ba |
-            <strong>{home.attributes?.[4]?.value || "?"}</strong> sqft
+            <strong>{home.attributes?.[2]?.value || '?'}</strong> bds |
+            <strong>{home.attributes?.[3]?.value || '?'}</strong> ba |
+            <strong>{home.attributes?.[4]?.value || '?'}</strong> sqft
           </p>
           <p>{home.address}</p>
-          <h2>{home.attributes?.[0]?.value || "?"} ETH</h2>
+          {(() => {
+            const priceAttr = home.attributes?.find((attr) =>
+              attr.trait_type?.toLowerCase().includes('price'),
+            );
+            return <h2>{priceAttr?.value || '?'} ETH</h2>;
+          })()}
 
-          {owner ? (
-            <div className='home__owned'>
-              Owned by {owner.slice(0, 6) + '...' + owner.slice(38, 42)}
+          {hasBought && hasInspected && hasApproved && hasFinalized ? (
+            <div className="home__owned">
+              Owned by {owner?.slice(0, 6)}...{owner?.slice(-4)}
             </div>
           ) : (
             <>
-              {isBuy && account && escrow && (
-                <div>
-                  {account === inspector ? (
-                    <button className='home__buy' onClick={inspectHandler} disabled={hasInspected}>
-                      Approve Inspection
-                    </button>
-                  ) : account === lender ? (
-                    <button className='home__buy' onClick={lendHandler} disabled={hasLended}>
-                      Approve & Lend
-                    </button>
-                  ) : account === seller ? (
-                    <button className='home__buy' onClick={sellHandler} disabled={hasSold}>
-                      Approve & Sell
+              {isBuy && account && isAdmin && (
+                <>
+                  <button
+                    className="home__buy"
+                    onClick={inspectionHandler}
+                    disabled={hasInspected}
+                  >
+                    Approve Inspection
+                  </button>
+                  <button
+                    className="home__buy"
+                    onClick={finalizeHandler}
+                    disabled={
+                      !hasBought ||
+                      !hasInspected ||
+                      !hasApproved ||
+                      hasFinalized
+                    }
+                  >
+                    Finalize Sale
+                  </button>
+                </>
+              )}
+
+              {!isAdmin && isBuy && hasBought && (
+                <>
+                  {!hasInspected ? (
+                    <p>⏳ Waiting for admin to pass inspection</p>
+                  ) : !hasApproved ? (
+                    <button className="home__buy" onClick={approveHandler}>
+                      ✅ Confirm Sale
                     </button>
                   ) : (
-                    <button className='home__buy' onClick={buyHandler} disabled={hasBought}>
-                      Buy
-                    </button>
+                    <p>⏳ Waiting for admin to finalize</p>
                   )}
-                </div>
+                </>
               )}
 
               <div className="home__button-group">
-              <button className='home__buy' onClick={() => setShowVisitForm(true)}>
-                 🗓️ Schedule Visit
-              </button>
-
-               <button className='home__buy' onClick={() => setShowContactForm(true)}>
+                <button
+                  className="home__buy"
+                  onClick={() => {
+                    setFormType('visit');
+                    setShowForm(true);
+                  }}
+                >
+                  🗓️ Schedule Visit
+                </button>
+                <button
+                  className="home__buy"
+                  onClick={() => {
+                    setFormType('contact');
+                    setShowForm(true);
+                  }}
+                >
                   📩 Contact Agent
-               </button>
+                </button>
               </div>
-
             </>
           )}
 
@@ -696,18 +254,37 @@ const Home = ({ home, provider, account, escrow, togglePop }) => {
           <hr />
           <h2>Facts and features</h2>
           <ul>
-            {(home.attributes || []).map((attribute, index) => (
-              <li key={index}><strong>{attribute.trait_type}</strong>: {attribute.value}</li>
+            {(home.attributes || []).map((attr, idx) => (
+              <li key={idx}>
+                <strong>{attr.trait_type}</strong>: {attr.value}
+              </li>
             ))}
           </ul>
         </div>
 
-        <button onClick={togglePop} className="home__close">
+        <button onClick={() => togglePop(null)} className="home__close">
           <img src={close} alt="Close" />
         </button>
 
-        {showContactForm && <ContactAgentForm onClose={() => setShowContactForm(false)} />}
-        {showVisitForm && <ContactAgentForm onClose={() => setShowVisitForm(false)} />}
+        {showForm && (
+          <ContactAgentForm
+            onClose={() => setShowForm(false)}
+            title={
+              formType === 'visit' ? 'Schedule a Visit' : 'Contact an Agent'
+            }
+          />
+        )}
+
+        {showBuyConfirm && (
+          <CustomConfirmModal
+            message="Are you sure you want to buy this property?"
+            onConfirm={() => {
+              buyHandler();
+              setShowBuyConfirm(false);
+            }}
+            onCancel={() => setShowBuyConfirm(false)}
+          />
+        )}
       </div>
     </div>
   );

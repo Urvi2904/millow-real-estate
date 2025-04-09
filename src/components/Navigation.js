@@ -1,197 +1,116 @@
-import { ethers } from 'ethers';
-import logo from '../assets/logo.svg';
-import { useNavigate, useLocation } from 'react-router-dom';
+/**
+ * Navigation - Top navigation bar.
+ * Displays different buttons depending on user role (admin or user).
+ */
 
-const Navigation = ({ account, connectWallet, setFilter, activeFilter }) => {
+import { useNavigate, useLocation } from 'react-router-dom';
+import logo from '../assets/logo.svg';
+
+const Navigation = ({
+  account,
+  setFilter,
+  activeFilter,
+  onLogout,
+  isAdmin = false,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Handle navigation and filter state for user (Buy / Rent)
   const handleNavigation = (category) => {
-    if (category === 'sell') {
-      navigate('/sell');
-    } else {
-      setFilter(category);
-      navigate('/');
-    }
+    setFilter?.(category);
+    navigate('/');
   };
 
+  // Handle logout button click
+  const handleLogout = () => {
+    localStorage.clear();
+    onLogout?.();
+    navigate('/login', { replace: true });
+  };
+
+  // Identify current path for highlighting active nav item
   const isSellPage = location.pathname === '/sell';
+  const isMyProps = location.pathname === '/my-properties';
+  const isInspections = location.pathname === '/inspections';
 
   return (
     <nav>
-      <ul className='nav__links'>
-        <li>
-          <button
-            className={activeFilter === 'buy' && !isSellPage ? 'active-filter' : ''}
-            onClick={() => handleNavigation('buy')}
-          >
-            Buy
-          </button>
-        </li>
-        <li>
-          <button
-            className={activeFilter === 'rent' && !isSellPage ? 'active-filter' : ''}
-            onClick={() => handleNavigation('rent')}
-          >
-            Rent
-          </button>
-        </li>
-        <li>
-          <button
-            className={isSellPage ? 'active-filter' : ''}
-            onClick={() => handleNavigation('sell')}
-          >
-            Sell
-          </button>
-        </li>
+      <ul className="nav__links">
+        {!isAdmin && (
+          <>
+            <li>
+              <button
+                className={activeFilter === 'buy' ? 'active-filter' : ''}
+                onClick={() => handleNavigation('buy')}
+              >
+                Buy
+              </button>
+            </li>
+            <li>
+              <button
+                className={activeFilter === 'rent' ? 'active-filter' : ''}
+                onClick={() => handleNavigation('rent')}
+              >
+                Rent
+              </button>
+            </li>
+            <li>
+              <button
+                className={isMyProps ? 'active-filter' : ''}
+                onClick={() => navigate('/my-properties')}
+              >
+                My Properties
+              </button>
+            </li>
+          </>
+        )}
+        {isAdmin && (
+          <>
+            <li>
+              <button
+                className={isSellPage ? 'active-filter' : ''}
+                onClick={() => navigate('/sell')}
+              >
+                Sell
+              </button>
+            </li>
+            <li>
+              <button
+                className={isInspections ? 'active-filter' : ''}
+                onClick={() => navigate('/inspections')}
+              >
+                Inspections
+              </button>
+            </li>
+          </>
+        )}
       </ul>
 
-      <div className='nav__brand'>
+      {/* App Logo + Title */}
+      <div className="nav__brand">
         <img src={logo} alt="Logo" />
         <h1>Millow</h1>
       </div>
 
+      {/* Wallet Status Block */}
       {account ? (
-        <button className='nav__connect'>
-          {account.slice(0, 6) + '...' + account.slice(38, 42)}
-        </button>
+        <div className="nav__account-controls">
+          <div className="nav__wallet">
+            <div className="label">Account</div>
+            <div className="address">
+              {account.slice(0, 6)}...{account.slice(-4)}
+            </div>
+          </div>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       ) : (
-        <button className='nav__connect' onClick={connectWallet}>
-          Connect
-        </button>
+        <div className="nav__wallet">Not Connected</div>
       )}
     </nav>
   );
 };
 
 export default Navigation;
-
-
-
-
-// import { ethers } from 'ethers';
-// import logo from '../assets/logo.svg';
-
-// const Navigation = ({ account, connectWallet, setFilter, activeFilter }) => {
-
-//   const handleNavigation = (category) => {
-//     setFilter(category);
-//   };
-
-//   return (
-//     <nav>
-//       <ul className='nav__links'>
-//         <li>
-//           <button
-//             className={activeFilter === 'buy' ? 'active-filter' : ''}
-//             onClick={() => handleNavigation('buy')}
-//           >
-//             Buy
-//           </button>
-//         </li>
-//         <li>
-//           <button
-//             className={activeFilter === 'rent' ? 'active-filter' : ''}
-//             onClick={() => handleNavigation('rent')}
-//           >
-//             Rent
-//           </button>
-//         </li>
-//         <li>
-//           <button
-//             className={activeFilter === 'sell' ? 'active-filter' : ''}
-//             onClick={() => handleNavigation('sell')}
-//           >
-//             Sell
-//           </button>
-//         </li>
-//       </ul>
-
-//       <div className='nav__brand'>
-//         <img src={logo} alt="Logo" />
-//         <h1>Millow</h1>
-//       </div>
-
-//       {account ? (
-//         <button className='nav__connect'>
-//           {account.slice(0, 6) + '...' + account.slice(38, 42)}
-//         </button>
-//       ) : (
-//         <button className='nav__connect' onClick={connectWallet}>
-//           Connect
-//         </button>
-//       )}
-//     </nav>
-//   );
-// };
-
-// export default Navigation;
-
-
-
-
-//-----------------------------------------
-// import { ethers } from 'ethers';
-// import logo from '../assets/logo.svg';
-
-// const Navigation = ({ account, setAccount, setFilter, activeFilter }) => {
-//   const handleNavigation = (category) => {
-//     setFilter(category);
-//   };
-
-//   const connectHandler = async () => {
-//     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-//     const account = ethers.utils.getAddress(accounts[0]);
-//     setAccount(account);
-//   };
-
-//   return (
-//     <nav>
-//       <ul className='nav__links'>
-//         <li>
-//           <button
-//             className={activeFilter === 'buy' ? 'active-filter' : ''}
-//             onClick={() => handleNavigation('buy')}
-//           >
-//             Buy
-//           </button>
-//         </li>
-//         <li>
-//           <button
-//             className={activeFilter === 'rent' ? 'active-filter' : ''}
-//             onClick={() => handleNavigation('rent')}
-//           >
-//             Rent
-//           </button>
-//         </li>
-//         <li>
-//           <button
-//             className={activeFilter === 'sell' ? 'active-filter' : ''}
-//             onClick={() => handleNavigation('sell')}
-//           >
-//             Sell
-//           </button>
-//         </li>
-//       </ul>
-
-//       <div className='nav__brand'>
-//         <img src={logo} alt="Logo" />
-//         <h1>Millow</h1>
-//       </div>
-
-//       {account ? (
-//         <button className='nav__connect'>
-//           {account.slice(0, 6) + '...' + account.slice(38, 42)}
-//         </button>
-//       ) : (
-//         <button className='nav__connect' onClick={connectHandler}>
-//           Connect
-//         </button>
-//       )}
-//     </nav>
-//   );
-// };
-
-// export default Navigation;
-
-
