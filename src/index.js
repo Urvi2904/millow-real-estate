@@ -1,3 +1,9 @@
+/**
+ *This file is part of the React App that interacts with the Ethereum blockchain and a smart contract for real estate transactions.
+ *This file is the entry point of the React application.
+ *It initializes the app, sets up the root element, and renders the main App component.
+ */
+// Import libraries and styles
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -8,10 +14,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

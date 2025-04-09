@@ -1,23 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
 
+/* Basic reset to remove margin/padding and set box-sizing */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* CSS variables for consistent theme colors */
 :root {
-  --clr-white: #FFFFFF;
+  --clr-white: #ffffff;
   --clr-black: #202020;
   --clr-grey: #707070;
-  --clr-blue: #6C63FF;
+  --clr-blue: #6c63ff;
   --clr-blue-2: #4c46b6;
   --clr-green: #4fb646;
 }
 
+/* Basic styling */
 body {
   margin: 0;
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -30,7 +33,7 @@ body {
   color: #555;
 }
 
-/* -- NAVIGATION -- */
+/* NAVIGATION BAR*/
 nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -41,7 +44,6 @@ nav {
   box-shadow: 0;
   padding: 1rem 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  
 }
 
 .nav__brand {
@@ -95,8 +97,8 @@ nav {
   border: none;
   border-radius: 4px;
 
-  font-family: "Open Sans";
-  font-size: 1.10em;
+  font-family: 'Open Sans';
+  font-size: 1.1em;
   font-weight: 600;
 
   cursor: pointer;
@@ -107,10 +109,10 @@ nav {
   background-color: var(--clr-blue-2);
 }
 
-/* -- HEADER -- */
+/* HEADER */
 
 header {
-  background-image: url("./assets/houses.png");
+  background-image: url('./assets/houses.png');
   background-position: center;
   background-size: cover;
   min-height: 40vh;
@@ -142,7 +144,7 @@ header {
 }
 
 .header__search::placeholder {
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
   font-size: 1.25em;
   font-weight: 600;
 }
@@ -151,7 +153,7 @@ header {
   outline: 1px solid var(--clr-blue);
 }
 
-/* -- CARDS -- */
+/* CARD LAYOUT - property listings */
 
 .cards__section {
   max-width: 1200px;
@@ -178,7 +180,9 @@ header {
 
   cursor: pointer;
   position: relative;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .card.active {
@@ -219,14 +223,14 @@ header {
 }
 
 .card__info h4 {
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
   font-size: 1.25em;
   font-weight: 600;
 }
 
 .card__info p {
-  font-family: "Open Sans";
-  font-size: 0.90em;
+  font-family: 'Open Sans';
+  font-size: 0.9em;
   margin-top: 5px;
 }
 
@@ -236,7 +240,7 @@ header {
   cursor: pointer;
 }
 
-/* -- HOMES -- */
+/* Home Modal Styles (when property is clicked) */
 
 .home {
   width: 100vw;
@@ -251,21 +255,17 @@ header {
 
 .home__details {
   display: grid;
-  /* grid-template-columns: repeat(2, 1fr); */
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
   align-items: center;
-
   width: 80%;
   height: 70%;
   margin: 0 auto;
   padding: 20px;
-
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
-
   background: var(--clr-white);
 }
 
@@ -325,8 +325,8 @@ header {
   border: none;
   border-radius: 4px;
 
-  font-family: "Open Sans";
-  font-size: 1.10em;
+  font-family: 'Open Sans';
+  font-size: 1.1em;
   font-weight: 600;
 
   cursor: pointer;
@@ -379,6 +379,7 @@ header {
   cursor: default;
 }
 
+/* Filter buttons */
 .active-filter {
   background-color: #004691; /* slightly darker */
   color: #ffffff;
@@ -399,7 +400,7 @@ header {
   border-radius: 4px;
   padding: 0.4em 1em;
   margin: 0 0.3em;
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
   font-size: 1em;
   font-weight: 600;
   cursor: pointer;
@@ -412,6 +413,7 @@ header {
   transform: scale(0.96);
 }
 
+/* Responsive styles */
 @media screen and (max-width: 768px) {
   nav {
     grid-template-columns: repeat(2, 1fr);
@@ -422,118 +424,12 @@ header {
   }
 }
 
-/* Badge styling */
-.badge {
-  position: absolute;
-  background: red;
-  color: white;
-  font-size: 0.7rem;
-  padding: 3px 7px;
-  border-radius: 5px;
-  top: 10px;
-  left: 10px;
-  z-index: 10;
-}
-
-/* Dark theme styles */
-body.dark {
-  background-color: #121212;
-  color: #f2f2f2;
-}
-
-body.dark .card {
-  background-color: #1e1e1e;
-  border: 1px solid #333;
-}
-
-body.dark nav {
-  background-color: #1e1e1e;
-}
-
-.theme-toggle {
-  text-align: center;
-  margin: 1rem;
-}
-
-/* ---------SETTINGS MENU----------*/
-/* Settings menu styling */
-.settings-menu {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 999;
-}
-
-.settings-toggle {
-  background: #f0f0f0;
-  border: none;
-  font-size: 1.4rem;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s ease;
-}
-
-.settings-toggle:hover {
-  background: #e0e0e0;
-}
-
-.settings-dropdown {
-  margin-top: 0.5rem;
-  background: white;
-  border: 1px solid #ccc;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-width: 140px;
-  backdrop-filter: blur(8px);
-}
-
-.settings-dropdown button {
-  padding: 0.4rem 0.8rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  background-color: #f4f4f4;
-  transition: background 0.2s, color 0.2s;
-}
-
-.settings-dropdown button:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-body.dark .settings-dropdown {
-  background: #2a2a2a;
-  color: white;
-  border-color: #444;
-}
-
-body.dark .settings-dropdown button {
-  background-color: #444;
-  color: white;
-}
-
-body.dark .settings-dropdown button:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-/* ---------------- ContactAgentForm Styling ---------------- */
-
+/* Contact_Agent_Form Styling  */
 .form-modal {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0; 
+  right: 0;
   bottom: 0;
   width: 100%;
   height: 100%;
@@ -542,9 +438,8 @@ body.dark .settings-dropdown button:hover {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  overflow: hidden; 
+  overflow: hidden;
 }
-
 
 .contact-form {
   background: white;
@@ -555,7 +450,7 @@ body.dark .settings-dropdown button:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease-in-out;
 }
-
+/*contact form fields and labels */
 .contact-form h3 {
   text-align: center;
   margin-bottom: 20px;
@@ -582,6 +477,7 @@ body.dark .settings-dropdown button:hover {
   resize: none;
 }
 
+/* inline error text */
 .contact-form .error {
   color: red;
   font-size: 12px;
@@ -590,6 +486,7 @@ body.dark .settings-dropdown button:hover {
   display: block;
 }
 
+/* buttons */
 .contact-form button {
   padding: 10px 20px;
   border: none;
@@ -600,15 +497,17 @@ body.dark .settings-dropdown button:hover {
   margin-right: 10px;
 }
 
-.contact-form button[type="submit"] {
+/* Submit button */
+.contact-form button[type='submit'] {
   background: linear-gradient(to right, #6a11cb, #2575fc);
   color: #fff;
 }
 
-.contact-form button[type="submit"]:hover {
+.contact-form button[type='submit']:hover {
   background: linear-gradient(to right, #5a0fc9, #1d6cfb);
 }
 
+/* Cancel button */
 .contact-form button.cancel {
   background-color: #999;
   color: #fff;
@@ -618,6 +517,7 @@ body.dark .settings-dropdown button:hover {
   background-color: #777;
 }
 
+/* animation */
 @keyframes fadeIn {
   from {
     transform: scale(0.9);
@@ -649,6 +549,7 @@ body.dark .settings-dropdown button:hover {
   margin-bottom: 1rem;
 }
 
+/* Inputs, textarea, and select */
 .sell-property-form input,
 .sell-property-form textarea,
 .sell-property-form select {
@@ -657,14 +558,16 @@ body.dark .settings-dropdown button:hover {
   border: 1px solid #ccc;
   border-radius: 10px;
   width: 100%;
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
 }
 
+/* Allow textarea to grow vertically */
 .sell-property-form textarea {
   min-height: 80px;
   resize: vertical;
 }
 
+/* Submit button */
 .sell-property-form button {
   background: linear-gradient(to right, #6a11cb, #2575fc);
   color: white;
@@ -685,25 +588,7 @@ body.dark .settings-dropdown button:hover {
   font-weight: 600;
 }
 
-/* 
-delete button  */
-.delete-button {
-  margin-top: 10px;
-  background-color: #e63946;
-  color: #fff;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.delete-button:hover {
-  background-color: #c21f2f;
-}
-
-/* custom confirm modal.js */
-
+/* Custom confirm modal */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -726,6 +611,7 @@ delete button  */
   width: 320px;
 }
 
+/* buttons wrapper */
 .modal-actions {
   margin-top: 1rem;
   display: flex;
@@ -733,6 +619,7 @@ delete button  */
   gap: 1rem;
 }
 
+/* buttons */
 .confirm-btn {
   background-color: #dc3545;
   color: white;
@@ -743,9 +630,8 @@ delete button  */
 }
 
 .confirm-btn:hover {
-  background-color: #b52a38; 
+  background-color: #b52a38;
 }
-
 
 .cancel-btn {
   background-color: #6c757d;
@@ -760,7 +646,6 @@ delete button  */
   background-color: #555c63;
 }
 
-
 .submit-btn {
   background-color: #4b32e3;
   color: white;
@@ -774,27 +659,263 @@ delete button  */
   background-color: #3925b6;
 }
 
-.cancel-btn:hover {
-  background-color: #555;
+/* wallet display (top right) */
+.nav__wallet {
+  background-color: #7b61ff;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.3;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  font-family: Arial, sans-serif;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-
-/* Ensure card images are visible in dark mode */
-body.dark .card__image img {
-  opacity: 1;
-  filter: brightness(1); /* Reset any dimming effect */
+.nav__wallet .label {
+  font-weight: 600;
+  font-size: 13px;
 }
 
-/* Prevent dark cards from hiding content */
-body.dark .card__image {
-  background-color: #333; /* Helps with fallback image contrast */
+.nav__wallet .address {
+  font-size: 12px;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
 }
 
-body.dark .card__info {
-  background-color: #1e1e1e;
-  color: #f2f2f2;
+/* wallet  and logout button container */
+.nav__account-controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
 }
 
-body.dark .card {
-  border: 1px solid #444;
+/* logout button */
+.logout-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4em 1em;
+  font-family: 'Open Sans';
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 250ms ease;
+  margin-left: 0.3em;
+  height: 44px;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
+}
+
+.logout-btn:active {
+  transform: scale(0.96);
+}
+
+/* Sell Page  */
+.sell-form-section {
+  padding-bottom: 30px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 30px;
+}
+
+.cards.my-properties {
+  justify-content: center;
+}
+
+/* Message for empty listings */
+.no-results {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 20px;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Property listing cards - Fade-in Animation*/
+.card {
+  animation: fadeSlideIn 0.5s ease-in-out forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Delete button for house cards (for admin) */
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 15px;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.delete-button:hover {
+  background-color: #c0392b; /* Darker red on hover */
+  transform: translateY(-1px);
+}
+
+/* Bottom section of property cards*/
+.card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Buy button in Property Card Modal header */
+.home__header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.inline-buy {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.inline-buy:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #5a0fc9, #1d6cfb);
+}
+
+/* Admin panel - pass inspection button */
+.pass-inspection-button {
+  background: linear-gradient(to right, #7b2ff7, #3f86ed);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  transition: background 0.3s ease;
+}
+.pass-inspection-button:hover {
+  background: linear-gradient(to right, #6a23dc, #3576d6);
+}
+
+/* sold tag  */
+.sold-tag {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: default;
+  margin-right: 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* login page styling */
+/* White header in login page */
+.login-header {
+  background: white;
+  padding: 18px 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header__logo img {
+  height: 42px;
+}
+
+.header__logo h1 {
+  font-size: 28px;
+  color: #7b2ff7;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Background Section */
+.login-bg {
+  height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(35px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+  border-radius: 16px;
+  color: white;
+  max-width: 450px;
+  width: 90%;
+}
+
+.login-card h2 {
+  margin-bottom: 10px;
+}
+
+.login-card p {
+  margin-bottom: 20px;
+}
+
+/* Login Buttons */
+.login-btn {
+  background: linear-gradient(to right, #7b2ff7, #3f86ed);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  width: 100%;
+}
+
+.login-btn:hover {
+  background: linear-gradient(to right, #6a23dc, #3576d6);
 }
