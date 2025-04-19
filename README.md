@@ -30,6 +30,8 @@ Millow is a decentralized real estate marketplace built with **Ethereum smart co
 **Dev Tools:** Prettier, ESLint, Nodemon, VS Code
 
 ## Project Structure
+
+```text
 Millow-real-estate/
 │
 ├── backend/                     # Backend (Express + MongoDB)
@@ -90,7 +92,7 @@ Millow-real-estate/
 ├── package-lock.json
 ├── truffle-config.js           # Truffle network & compiler settings
 └── README.md                   # Project documentation
-
+```
 ## Dependencies
 
 ### 🧱 Core Technologies
