@@ -94,40 +94,40 @@ Millow-real-estate/
 ## Dependencies
 
 ### 🧱 Core Technologies
--React v19.0.0 – Frontend UI library
--Express v4.21.2 – Backend web server
--MongoDB + Mongoose v8.13.1 – NoSQL database & ORM
--Solidity v0.8.16 – Smart contract language
--Truffle v5.11.5 – Smart contract development framework
--Ethers.js v5.8.0 – Ethereum wallet & contract interaction 
+- React v19.0.0 – Frontend UI library
+- Express v4.21.2 – Backend web server
+- MongoDB + Mongoose v8.13.1 – NoSQL database & ORM
+- Solidity v0.8.16 – Smart contract language
+- Truffle v5.11.5 – Smart contract development framework
+- Ethers.js v5.8.0 – Ethereum wallet & contract interaction 
 
 ### 🧰 Development & Utilities
--dotenv v16.4.7 – Environment variable management
--nodemon v3.1.9 – Auto-restart server on changes
--multer v1.4.5-lts.2 – File upload handling (images)
--cors v2.8.5 – Cross-origin resource sharing
--lite-server v2.6.1 – Lightweight dev server for simple apps
+- dotenv v16.4.7 – Environment variable management
+- nodemon v3.1.9 – Auto-restart server on changes
+- multer v1.4.5-lts.2 – File upload handling (images)
+- cors v2.8.5 – Cross-origin resource sharing
+- lite-server v2.6.1 – Lightweight dev server for simple apps
 
 ### 🎨 Code Quality & Styling
--Prettier v3.5.3 – Code formatter
--ESLint v8.57.1 – JavaScript linter
--eslint-plugin-react v7.37.5
--eslint-plugin-jsx-a11y v6.10.2
--eslint-plugin-react-hooks v5.2.0
+- Prettier v3.5.3 – Code formatter
+- ESLint v8.57.1 – JavaScript linter
+- eslint-plugin-react v7.37.5
+- eslint-plugin-jsx-a11y v6.10.2
+- eslint-plugin-react-hooks v5.2.0
 
 ### 🧭 Routing & Navigation
--react-router-dom v7.5.0 – SPA routing for React
+- react-router-dom v7.5.0 – SPA routing for React
 
 ### 📊 Analytics & Optimization
--web-vitals v4.2.4 – Real user performance metrics
+- web-vitals v4.2.4 – Real user performance metrics
 
 📦 Smart Contract 
--@openzeppelin/contracts v4.9.3 – Solidity libraries
--@truffle/hdwallet-provider v2.1.15 – Wallet provider for Truffle deployments
+- @openzeppelin/contracts v4.9.3 – Solidity libraries
+- @truffle/hdwallet-provider v2.1.15 – Wallet provider for Truffle deployments
 
 ### 🌐 Global Tools
--json-server v1.0.0-beta.3 – Mock REST API (optional)
--Truffle v5.7.9 – (Global install; may differ from local)
+- json-server v1.0.0-beta.3 – Mock REST API (optional)
+- Truffle v5.7.9 – (Global install; may differ from local)
 
 
 ## Getting Started
