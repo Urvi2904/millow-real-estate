@@ -156,12 +156,12 @@ truffle migrate
 6. Start the Frontend
 npm start
 
-#🔐 Smart Contract Setup Notes
+## 🔐Smart Contract Setup Notes
 After running truffle migrate, copy the Escrow contract address and set it as the admin wallet in Login.js:
 const ADMIN_ADDRESS = '0x...'.toLowerCase();
 
 Copy these ABI files from build to frontend:
-# After migration
+After migration
 cp build/contracts/Escrow.json src/abis/
 cp build/contracts/RealEstate.json src/abis/
 -Roles & Authentication
