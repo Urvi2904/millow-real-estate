@@ -1,5 +1,5 @@
 
-Millow Real Estate - Blockchain-Powered Property Platform
+**Millow Real Estate - Blockchain-Powered Property Platform**
 
 Millow is a decentralized real estate marketplace built with **Ethereum smart contracts**, **React**, and **MongoDB**. It enables admins to list properties for sale or rent and allows users to explore, visit, contact, and even purchase properties securely via blockchain.
 
@@ -132,12 +132,12 @@ Millow-real-estate/
 
 📦 Smart Contract 
 - @openzeppelin/contracts v4.9.3 – Solidity libraries
-- 
+  
 - @truffle/hdwallet-provider v2.1.15 – Wallet provider for Truffle deployments
 
 ### 🌐 Global Tools
 - json-server v1.0.0-beta.3 – Mock REST API (optional)
-- 
+  
 - Truffle v5.7.9 – (Global install; may differ from local)
 
 
@@ -148,7 +148,6 @@ Millow-real-estate/
 ### 2. Install Dependencies
 - Backend
 `$ cd backend`
-
 `$ npm install`
 
 - Frontend
@@ -182,7 +181,7 @@ cp build/contracts/Escrow.json src/abis/
 cp build/contracts/RealEstate.json src/abis
 
 - Roles & Authentication
-- 
+
 Admin: Must connect using the address that deployed the Escrow contract.
 
 User: Any other wallet address can interact as a buyer.
