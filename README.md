@@ -94,40 +94,40 @@ Millow-real-estate/
 ## Dependencies
 
 🧱 Core Technologies
-React v19.0.0 – Frontend UI library
-Express v4.21.2 – Backend web server
-MongoDB + Mongoose v8.13.1 – NoSQL database & ORM
-Solidity v0.8.16 – Smart contract language
-Truffle v5.11.5 – Smart contract development framework
-Ethers.js v5.8.0 – Ethereum wallet & contract interaction 
+-React v19.0.0 – Frontend UI library
+-Express v4.21.2 – Backend web server
+-MongoDB + Mongoose v8.13.1 – NoSQL database & ORM
+-Solidity v0.8.16 – Smart contract language
+-Truffle v5.11.5 – Smart contract development framework
+-Ethers.js v5.8.0 – Ethereum wallet & contract interaction 
 
 🧰 Development & Utilities
-dotenv v16.4.7 – Environment variable management
-nodemon v3.1.9 – Auto-restart server on changes
-multer v1.4.5-lts.2 – File upload handling (images)
-cors v2.8.5 – Cross-origin resource sharing
-lite-server v2.6.1 – Lightweight dev server for simple apps
+-dotenv v16.4.7 – Environment variable management
+-nodemon v3.1.9 – Auto-restart server on changes
+-multer v1.4.5-lts.2 – File upload handling (images)
+-cors v2.8.5 – Cross-origin resource sharing
+-lite-server v2.6.1 – Lightweight dev server for simple apps
 
 🎨 Code Quality & Styling
-Prettier v3.5.3 – Code formatter
-ESLint v8.57.1 – JavaScript linter
-eslint-plugin-react v7.37.5
-eslint-plugin-jsx-a11y v6.10.2
-eslint-plugin-react-hooks v5.2.0
+-Prettier v3.5.3 – Code formatter
+-ESLint v8.57.1 – JavaScript linter
+-eslint-plugin-react v7.37.5
+-eslint-plugin-jsx-a11y v6.10.2
+-eslint-plugin-react-hooks v5.2.0
 
 🧭 Routing & Navigation
-react-router-dom v7.5.0 – SPA routing for React
+-react-router-dom v7.5.0 – SPA routing for React
 
 📊 Analytics & Optimization
-web-vitals v4.2.4 – Real user performance metrics
+-web-vitals v4.2.4 – Real user performance metrics
 
 📦 Smart Contract 
-@openzeppelin/contracts v4.9.3 – Solidity libraries
-@truffle/hdwallet-provider v2.1.15 – Wallet provider for Truffle deployments
+-@openzeppelin/contracts v4.9.3 – Solidity libraries
+-@truffle/hdwallet-provider v2.1.15 – Wallet provider for Truffle deployments
 
 🌐 Global Tools
-json-server v1.0.0-beta.3 – Mock REST API (optional)
-Truffle v5.7.9 – (Global install; may differ from local)
+-json-server v1.0.0-beta.3 – Mock REST API (optional)
+-Truffle v5.7.9 – (Global install; may differ from local)
 
 
 ## Getting Started
@@ -135,9 +135,36 @@ Truffle v5.7.9 – (Global install; may differ from local)
 1. Clone the repo
 
 2. Install Dependencies
+#Backend
+cd backend
+npm install
 
-3. Start the Backend
+#Frontend
+npm install
 
-4. Compile and Deploy Smart Contracts
+3. Run MongoDB locally
+Make sure MongoDB is running on mongodb://localhost:27017.
 
-5. Start the Frontend
+4. Start the Backend
+cd backend
+node server.js
+
+5. Compile and Deploy Smart Contracts
+truffle compile
+truffle migrate
+
+6. Start the Frontend
+npm start
+
+#🔐 Smart Contract Setup Notes
+After running truffle migrate, copy the Escrow contract address and set it as the admin wallet in Login.js:
+const ADMIN_ADDRESS = '0x...'.toLowerCase();
+
+Copy these ABI files from build to frontend:
+# After migration
+cp build/contracts/Escrow.json src/abis/
+cp build/contracts/RealEstate.json src/abis/
+-Roles & Authentication
+Admin: Must connect using the address that deployed the Escrow contract.
+User: Any other wallet address can interact as a buyer.
+
