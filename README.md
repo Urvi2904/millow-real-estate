@@ -19,13 +19,13 @@ Millow is a decentralized real estate marketplace built with **Ethereum smart co
 - View owned properties
 ## Tech Stack
 
-**Frontend:** React, React Router, Ethers.js
+**Frontend:** React, React Router, Ethers.js, HTML5, CSS3, JavaScript(ES6+)
 
-**Backend:** Node.js, Express.js, MongoDB, Multer 
+**Backend:** Node.js, Express.js, MongoDB, Mongoose, Multer 
 
-**Smart Contracts:** Solidity, Truffle
+**Blockchain Smart Contracts:** Solidity, Truffle, Ganache
 
-**Web3 Tools:** MetaMask, Ethers.js, Ganache 
+**Web3 Tools:** MetaMask, Ethers.js
 
 **Dev Tools:** Prettier, ESLint, Nodemon, VS Code
 
