@@ -29,8 +29,107 @@ Millow is a decentralized real estate marketplace built with **Ethereum smart co
 
 **Dev Tools:** Prettier, ESLint, Nodemon, VS Code
 
+## Project Structure
+Millow-real-estate/
+│
+├── backend/                     # Backend (Express + MongoDB)
+│   ├── config/
+│   │   └── db.js                # MongoDB connection setup
+│   ├── models/
+│   │   └── Property.js          # Property schema
+│   ├── routes/
+│   │   └── properties.js        # REST API routes
+│   ├── uploads/                 # Uploaded images
+│   ├── .env                     # Environment variables
+│   └── server.js                # Backend entry point
+│
+├── build/                       # Frontend production build (after `npm run build`)
+│
+├── contracts/                   # Solidity Smart Contracts
+│   ├── Escrow.sol
+│   └── RealEstate.sol
+│
+├── migrations/                  # Truffle migration scripts
+│   ├── 1_deploy_real_estate.js
+│   └── 2_deploy_escrow.js
+│
+├── public/                      # Public assets for frontend
+│
+├── src/                         # Frontend (React)
+│   ├── abis/                    # Contract ABIs from Truffle
+│   │   ├── Escrow.json
+│   │   └── RealEstate.json
+│   ├── assets/                  # Static assets (images, logos, etc.)
+│   ├── components/              # UI Components and pages
+│   │   ├── ContactAgentForm.js
+│   │   ├── CustomConfirmModal.js
+│   │   ├── Home.js
+│   │   ├── InspectionPanel.js
+│   │   ├── Login.js
+│   │   ├── myProperties.js
+│   │   ├── Navigation.js
+│   │   ├── Search.js
+│   │   ├── Sell.js
+│   │   └── SellPropertyForm.js
+│   ├── services/
+│   │   └── contracts.js         # Loads smart contracts using ethers.js
+│   ├── App.js                   # Main React component
+│   ├── config.json              # Deployed contract addresses
+│   ├── index.css                # Global styles
+│   ├── index.js                 # React entry point
+│   ├── logo.svg                 # App logo
+│   ├── reportWebVitals.js
+│   └── setupTests.js
+│
+├── .eslintrc.json
+├── .eslintignore
+├── .gitignore
+├── .prettierrc
+├── .prettierignore
+├── package.json
+├── package-lock.json
+├── truffle-config.js           # Truffle network & compiler settings
+└── README.md                   # Project documentation
 
-## Screenshots
+## Dependencies
+
+🧱 Core Technologies
+React v19.0.0 – Frontend UI library
+Express v4.21.2 – Backend web server
+MongoDB + Mongoose v8.13.1 – NoSQL database & ORM
+Solidity v0.8.16 – Smart contract language
+Truffle v5.11.5 – Smart contract development framework
+Ethers.js v5.8.0 – Ethereum wallet & contract interaction 
+
+🧰 Development & Utilities
+dotenv v16.4.7 – Environment variable management
+nodemon v3.1.9 – Auto-restart server on changes
+multer v1.4.5-lts.2 – File upload handling (images)
+cors v2.8.5 – Cross-origin resource sharing
+lite-server v2.6.1 – Lightweight dev server for simple apps
+
+🎨 Code Quality & Styling
+Prettier v3.5.3 – Code formatter
+ESLint v8.57.1 – JavaScript linter
+eslint-plugin-react v7.37.5
+eslint-plugin-jsx-a11y v6.10.2
+eslint-plugin-react-hooks v5.2.0
+
+🧭 Routing & Navigation
+react-router-dom v7.5.0 – SPA routing for React
+
+📊 Analytics & Optimization
+web-vitals v4.2.4 – Real user performance metrics
+
+📦 Smart Contract 
+@openzeppelin/contracts v4.9.3 – Solidity libraries
+@truffle/hdwallet-provider v2.1.15 – Wallet provider for Truffle deployments
+
+🌐 Global Tools
+json-server v1.0.0-beta.3 – Mock REST API (optional)
+Truffle v5.7.9 – (Global install; may differ from local)
+
+
 ## Getting Started
 
 1. Clone the repo
