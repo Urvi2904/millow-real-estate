@@ -1,22 +1,25 @@
 /**
- * Navigation - Top navigation bar.
- * Displays different buttons depending on user role (admin or user).
+ * Navigation.js
+ *
+ * Top navigation bar component.
+ * Renders different navigation options based on whether the user is an admin or a regular user.
+ * Also displays wallet address and allows logout.
  */
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.svg';
 
 const Navigation = ({
-  account,
-  setFilter,
-  activeFilter,
-  onLogout,
-  isAdmin = false,
+  account, // Wallet address of the logged-in user
+  setFilter, // Callback to set property filter ("buy" or "rent")
+  activeFilter, // Currently selected filter
+  onLogout, // Callback to handle logout action
+  isAdmin = false, // Boolean indicating if user is admin
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Handle navigation and filter state for user (Buy / Rent)
+  // Navigate and apply property filter
   const handleNavigation = (category) => {
     setFilter?.(category);
     navigate('/');
@@ -29,14 +32,16 @@ const Navigation = ({
     navigate('/login', { replace: true });
   };
 
-  // Identify current path for highlighting active nav item
+  // Detect which admin/user page is currently active (for UI highlighting)
   const isSellPage = location.pathname === '/sell';
   const isMyProps = location.pathname === '/my-properties';
   const isInspections = location.pathname === '/inspections';
 
+  //UI rendering based on role
   return (
     <nav>
       <ul className="nav__links">
+        {/* User View: Buy / Rent / My Properties */}
         {!isAdmin && (
           <>
             <li>
@@ -65,6 +70,8 @@ const Navigation = ({
             </li>
           </>
         )}
+
+        {/* Admin View: Sell / Inspections */}
         {isAdmin && (
           <>
             <li>
@@ -93,7 +100,7 @@ const Navigation = ({
         <h1>Millow</h1>
       </div>
 
-      {/* Wallet Status Block */}
+      {/* Wallet Status Block + Logout */}
       {account ? (
         <div className="nav__account-controls">
           <div className="nav__wallet">

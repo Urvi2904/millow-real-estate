@@ -1,17 +1,19 @@
 /**
- * SellPropertyForm - Form for admin to list a new property to sell or rent.
- * Sends data to backend and lists property on blockchain via Escrow smart contract.
+ * SellPropertyForm.js
+ *
+ * Form for admin to list a new property for sale or rent.
+ * Collects metadata, sends it to the backend, and registers the listing on-chain.
  */
 import { useState } from 'react';
 
 const SellPropertyForm = ({
-  account,
-  listingType,
-  setListingType,
-  onClose,
-  reloadHomes,
-  resetSelection,
-  escrow,
+  account, //Admin wallet address
+  listingType, // Current listing type (sell/rent)
+  setListingType, // Function to set listing type
+  onClose, // Callback to close the form
+  reloadHomes, // Callback to refresh homes list
+  resetSelection, // Callback to reset selected property
+  escrow, // Escrow smart contract instance
 }) => {
   // Local state for form input values
   const [form, setForm] = useState({
@@ -38,7 +40,8 @@ const SellPropertyForm = ({
     }));
   };
 
-  // handleSubmit - Submit form data to backend and blockchain
+  // handleSubmit - Submit form data to backend (metadata + image),
+  // then calls the escrow smart contract to list the property
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -82,6 +85,7 @@ const SellPropertyForm = ({
       const result = await res.json();
       setUploading(false);
 
+      // Show error if no toen ID is returned
       if (!res.ok || !result.tokenId) {
         alert('❌ Property was not fully saved. No token ID returned.');
         console.error('⚠️ Server response:', result);
@@ -116,6 +120,7 @@ const SellPropertyForm = ({
     <form className="sell-property-form" onSubmit={handleSubmit}>
       <h2>Submit Your Property ({listingType})</h2>
 
+      {/* Dropdown : select listing type (sell/rent) */}
       <select
         name="listingType"
         value={listingType}
@@ -125,6 +130,7 @@ const SellPropertyForm = ({
         <option value="Rent">Rent</option>
       </select>
 
+      {/* Form fields for property details */}
       <input
         name="name"
         placeholder="Property Title"
@@ -186,6 +192,8 @@ const SellPropertyForm = ({
         onChange={handleChange}
         required
       />
+
+      {/* Upload image */}
       <input
         name="image"
         type="file"
@@ -194,6 +202,7 @@ const SellPropertyForm = ({
         required
       />
 
+      {/* Submit + Cancel buttons */}
       <div
         style={{
           display: 'flex',

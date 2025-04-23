@@ -1,7 +1,9 @@
 /**
- * CustomConfirmModal - A reusable modal that asks the user to confirm or cancel an action.
+ * CustomConfirmModal
+ * A reusable modal that asks the user to confirm or cancel an action.
+ * Calls `onConfirm()` or `onCancel()` based on user interaction.
  *
- * Props:
+ * Properties:
  * - message (string): The confirmation text to display.
  * - onConfirm (function): Callback when user confirms.
  * - onCancel (function): Callback when user cancels or closes the modal.
@@ -13,7 +15,10 @@ const CustomConfirmModal = ({ onConfirm, onCancel, message }) => {
   return (
     <div className="modal-backdrop">
       <div className="modal-box">
+        {/* Message prompt */}
         <p>{message}</p>
+
+        {/* Action buttons */}
         <div className="modal-actions">
           <button className="confirm-btn" onClick={onConfirm}>
             Yes

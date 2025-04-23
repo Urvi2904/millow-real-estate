@@ -1,9 +1,9 @@
 /**
  * App.js file
  *
- * Main React entry point and routing controller.
- * Loads smart contracts, initializes user state (wallet & role),
- * fetches properties from backend, and manages all frontend routes.
+ * Main entry point for the React application.
+ * Manages routes, user sessions, property data, blockchain contract loading,
+ * and role-based views (admin/user).
  *
  * Core responsibilities:
  * - Loads blockchain data (RealEstate + Escrow contracts)
@@ -14,6 +14,7 @@
  */
 
 /* eslint-disable react-hooks/exhaustive-deps */
+
 //Import libraries
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
@@ -40,7 +41,7 @@ function App() {
   const [userRole, setUserRole] = useState(null); // "admin" or "user"
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Login state
 
-  //Property data state
+  //Property listing state
   const [homes, setHomes] = useState([]); // All properties loaded from backend
   const [home, setHome] = useState(null); // Currently selected property (for popup)
   const [toggle, setToggle] = useState(false); // Toggle popup/modal visibility
@@ -192,13 +193,16 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Not logged in : shoe login */}
         {!isLoggedIn ? (
           <>
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
           </>
         ) : userRole === 'admin' ? (
+          //admin routes
           <>
+            {/* Admin Sell Page - for listing properties */}
             <Route
               path="/sell"
               element={
@@ -208,6 +212,8 @@ function App() {
                     onLogout={handleLogout}
                     isAdmin={true}
                   />
+
+                  {/* Render Sell component only after contracts are loaded */}
                   {contractsLoaded ? (
                     <Sell
                       account={account}
@@ -225,6 +231,8 @@ function App() {
                 </>
               }
             />
+
+            {/* Admin Inspections Panel - for approving inspections */}
             <Route
               path="/inspections"
               element={
@@ -247,10 +255,14 @@ function App() {
                 </>
               }
             />
+
+            {/* Redirect any other route to the Sell page as default for admin */}
             <Route path="*" element={<Navigate to="/sell" replace />} />
           </>
         ) : (
+          //User routes
           <>
+            {/* Homepage - shows filtered listings */}
             <Route
               path="/"
               element={
@@ -262,7 +274,11 @@ function App() {
                     onLogout={handleLogout}
                     isAdmin={false}
                   />
+
+                  {/* Search bar for filtering properties */}
                   <Search setSearchQuery={setSearchQuery} />
+
+                  {/* Property cards section */}
                   <div className="cards__section">
                     <h3>Homes For You</h3>
                     <hr />
@@ -270,6 +286,7 @@ function App() {
                       <p>Loading properties...</p>
                     ) : (
                       (() => {
+                        // Filter homes by type + search
                         const filteredHomes = homes.filter((home) => {
                           const type = home.attributes
                             ?.find((attr) => attr.trait_type === 'Listing Type')
@@ -283,6 +300,8 @@ function App() {
                           const isBuy = type === 'buy';
                           const inspectionPassed =
                             home.inspectionPassed === true;
+
+                          // Don't show homes that are already sold
                           return (
                             isTypeMatch &&
                             matchesSearch &&
@@ -290,11 +309,13 @@ function App() {
                           );
                         });
 
+                        // If no homes match the criteria, show a message
                         return filteredHomes.length === 0 ? (
                           <p className="no-results">
                             😕 No homes match your criteria.
                           </p>
                         ) : (
+                          // Render the filtered homes
                           <div className="cards">
                             {filteredHomes.map((home, index) => (
                               <div
@@ -307,6 +328,7 @@ function App() {
                                   e.key === 'Enter' && togglePop(home)
                                 }
                               >
+                                {/* Property image */}
                                 <div className="card__image">
                                   <img
                                     src={
@@ -317,6 +339,8 @@ function App() {
                                     alt="Home"
                                   />
                                 </div>
+
+                                {/* Property info block */}
                                 <div className="card__info">
                                   <h4>
                                     {home.attributes?.[0]?.value || '?'} ETH
@@ -330,6 +354,8 @@ function App() {
                       })()
                     )}
                   </div>
+
+                  {/* Property details popup/modal */}
                   {toggle && home && contractsLoaded && (
                     <Home
                       home={home}
@@ -342,18 +368,24 @@ function App() {
                 </>
               }
             />
+
+            {/* My Properties - shows properties owned by the user */}
             <Route
               path="/my-properties"
               element={
                 <>
+                  {/* Top Navigation bar for users */}
                   <Navigation
                     account={account}
                     onLogout={handleLogout}
                     isAdmin={false}
                   />
+
+                  {/* Load component only if contracts are ready */}
                   {contractsLoaded ? (
                     <MyProperties account={account} escrow={escrowContract} />
                   ) : (
+                    // Loading state while waiting for contracts load
                     <p style={{ textAlign: 'center', padding: '2rem' }}>
                       🔄 <strong>Loading properties...</strong>
                     </p>
@@ -361,6 +393,8 @@ function App() {
                 </>
               }
             />
+
+            {/* Catch-all fallback route for users */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </>
         )}

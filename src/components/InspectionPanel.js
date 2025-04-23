@@ -1,6 +1,11 @@
 /**
- * InspectionPanel - Displays properties awaiting admin inspection approval.
- * Filters backend properties to show only those where inspection is not yet passed
+ * InspectionPanel.js
+ *
+ * Displays properties that are pending admin inspection.
+ * Filters backend property list and shows only items that:
+ *   - Are assigned to the current inspector
+ *   - Have a buyer
+ *   - Have not passed inspection yet
  */
 
 import { useEffect, useState } from 'react';
@@ -24,6 +29,7 @@ const InspectionPanel = ({ account, escrow }) => {
 
       const relevant = [];
 
+      //Loop through all properties and filter those needing inspection
       for (const home of data) {
         if (!home.tokenId) continue;
 

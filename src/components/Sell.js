@@ -1,9 +1,12 @@
 /**
- * Sell - Admin view to create new property listings and manage previously listed ones.
- * Allows upload, view, and delete of "buy" or "rent" properties.
+ * Sell.js
+ *
+ * Admin-only view for listing properties for sale or rent.
+ * Allows creating new listings, viewing existing ones, and deleting unsold listings.
  */
 
 /* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import SellPropertyForm from './SellPropertyForm';
@@ -15,6 +18,7 @@ const Sell = ({ account, reloadHomes, resetSelection, escrow, realEstate }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null); // Selected property to delete
   const [myProperties, setMyProperties] = useState([]); // Properties owned by the admin
 
+  // Start form display
   const handleStart = () => setShowForm(true);
 
   /**
@@ -63,11 +67,13 @@ const Sell = ({ account, reloadHomes, resetSelection, escrow, realEstate }) => {
     }
   }, [account]);
 
+  // Triggered when "Delete" button is clicked
   const handleDeleteClick = (id) => {
     setConfirmDeleteId(id);
   };
 
-  //confirmDelete - Sends DELETE request to backend to remove property
+  //confirmDelete - Sends DELETE request to backend to remove property from database
+  // Refreshes property list
   const confirmDelete = async () => {
     try {
       const res = await fetch(
@@ -93,12 +99,15 @@ const Sell = ({ account, reloadHomes, resetSelection, escrow, realEstate }) => {
     }
   };
 
-  //JSX: Main component structure
+  //JSX Rendering: Main component structure
   return (
     <div className="cards__section">
+      {/* Top section: create new property form */}
       <div className="sell-form-section">
         <h3>Sell or Rent Your Property</h3>
         <hr />
+
+        {/* Button to start the form or show the form itself */}
         {!showForm ? (
           <button className="home__buy" onClick={handleStart}>
             🏠 Sell or Rent Your Property
@@ -109,21 +118,23 @@ const Sell = ({ account, reloadHomes, resetSelection, escrow, realEstate }) => {
             listingType={listingType}
             setListingType={setListingType}
             onClose={() => {
-              setShowForm(false);
-              resetSelection();
-              loadMyProperties();
+              setShowForm(false); //Hide form
+              resetSelection(); //Reset selected property
+              loadMyProperties(); //Refresh property list
             }}
-            reloadHomes={reloadHomes}
+            reloadHomes={reloadHomes} //Trigger reload of homes list
             resetSelection={resetSelection}
-            escrow={escrow}
-            realEstate={realEstate}
+            escrow={escrow} // Escrow contract for blockchain interaction
+            realEstate={realEstate} //NFT contract
           />
         )}
       </div>
 
+      {/* Section title for existing listings */}
       <h3>🏠 My Properties</h3>
       <hr />
 
+      {/* Empty state if admin has no properties listed */}
       {myProperties.length === 0 && !showForm && (
         <p className="no-results">
           🧐 You haven&apos;t listed any properties yet. Click above to get
@@ -131,10 +142,12 @@ const Sell = ({ account, reloadHomes, resetSelection, escrow, realEstate }) => {
         </p>
       )}
 
+      {/* List of property cards (owned by admin) */}
       {myProperties.length > 0 && (
         <div className="cards my-properties">
           {myProperties.map((home, index) => (
             <div className="card" key={index}>
+              {/* Property image */}
               <div className="card__image">
                 <img
                   src={
@@ -145,18 +158,25 @@ const Sell = ({ account, reloadHomes, resetSelection, escrow, realEstate }) => {
                   alt="Home"
                 />
               </div>
+
+              {/* Property info block */}
               <div className="card__info">
+                {/* Price, attributes, and address */}
                 <h4>{home.attributes?.[0]?.value || '?'} ETH</h4>
                 <p>
                   <strong>{home.attributes?.[2]?.value || '?'}</strong> bds |
                   <strong>{home.attributes?.[3]?.value || '?'}</strong> ba |
                   <strong>{home.attributes?.[4]?.value || '?'}</strong> sqft
                 </p>
+
+                {/* Address + sale status or delete option */}
                 <div className="card__footer">
                   <p>{home.address}</p>
                   {home.inspectionPassed ? (
+                    //Sold tag if property is sold
                     <div className="sold-tag">Sold ✅ </div>
                   ) : (
+                    // Delete button (only if owner is current admin)
                     home.owner?.toLowerCase() === account?.toLowerCase() && (
                       <button
                         className="delete-button"
@@ -173,6 +193,7 @@ const Sell = ({ account, reloadHomes, resetSelection, escrow, realEstate }) => {
         </div>
       )}
 
+      {/* Confirmation modal for deleting a property */}
       {confirmDeleteId && (
         <CustomConfirmModal
           message="Are you sure you want to delete this property listing?"

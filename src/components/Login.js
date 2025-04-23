@@ -1,6 +1,8 @@
 /**
- * Login - Provides a clean role-based login screen.
- * Admin and User are verified via wallet address.
+ * Login.js
+ *
+ * Provides a clean MetaMask login screen.
+ * User selects either "admin" or "user" role, and role is validated via wallet address.
  */
 
 import React, { useState } from 'react';
@@ -66,6 +68,7 @@ const Login = ({ onLogin }) => {
     }
   };
 
+  //Render Login Page
   //JSX : Login Page with Logo, Background & Role Buttons
   return (
     <div className="login-page">
@@ -89,12 +92,18 @@ const Login = ({ onLogin }) => {
         <div className="login-card">
           <h2> Welcome to the Real Estate DApp 🏠</h2>
           <p>Please choose your role:</p>
+
+          {/* Admin Login */}
           <button className="login-btn" onClick={() => handleLogin('admin')}>
             🛂 Login as Admin
           </button>
+
+          {/* User Login */}
           <button className="login-btn" onClick={() => handleLogin('user')}>
             🙋 Login as User
           </button>
+
+          {/* Loading Indicator */}
           {loading && <p>🔄 Connecting to MetaMask...</p>}
         </div>
       </div>

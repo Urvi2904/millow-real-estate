@@ -1,6 +1,9 @@
 /**
- * ContactAgentForm - A modal popup form that lets users contact an agent.
- * Includes name, email, and message inputs with basic client-side validation.
+ * ContactAgentForm
+ *
+ * A modal form that lets users send a message to an agent.
+ * Includes input validation for name, email, and message fields.
+ * Displays inline error messages. Calls `onClose()` when submitted or cancelled.
  */
 
 import { useState } from 'react';
@@ -22,7 +25,7 @@ const ContactAgentForm = ({ onClose, title = 'Contact Agent' }) => {
     e.preventDefault();
     const newErrors = {};
 
-    // Validation rules
+    // Validation rules, required fields
     if (!name.trim()) newErrors.name = 'Name is required.';
     if (!email.trim()) newErrors.email = 'Email is required.';
     else if (!validateEmail(email)) newErrors.email = 'Invalid email format.';
@@ -42,7 +45,7 @@ const ContactAgentForm = ({ onClose, title = 'Contact Agent' }) => {
       <form className="contact-form" onSubmit={handleSubmit}>
         <h3>{title || 'Contact an Agent'}</h3>
 
-        {/* <label>Name</label> */}
+        {/* Name input */}
         <label htmlFor="contact-name">Name</label>
         <input
           id="contact-name"
@@ -52,7 +55,7 @@ const ContactAgentForm = ({ onClose, title = 'Contact Agent' }) => {
         />
         {errors.name && <span className="error">{errors.name}</span>}
 
-        {/* <label>Email</label> */}
+        {/* Email input */}
         <label htmlFor="contact-email">Email</label>
         <input
           id="contact-email"
@@ -62,7 +65,7 @@ const ContactAgentForm = ({ onClose, title = 'Contact Agent' }) => {
         />
         {errors.email && <span className="error">{errors.email}</span>}
 
-        {/* <label>Message</label> */}
+        {/* Message input */}
         <label htmlFor="contact-message">Message</label>
         <textarea
           id="contact-message"

@@ -1,5 +1,9 @@
 /**
- * MyProperties - Lists properties the current user has bought.
+ * MyProperties.js
+ *
+ * Displays a list of properties purchased by the current user.
+ * Fetches all properties from the backend, checks buyer via escrow contract,
+ * and filters to show only those bought by the connected wallet.
  */
 
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -31,6 +35,7 @@ const MyProperties = ({ account, escrow }) => {
         }),
       );
 
+      // Filter properties to show only those bought by the current user
       const userHomes = data.filter((_, i) => bought[i]);
       setMyProperties(userHomes);
     } catch (err) {
@@ -38,6 +43,7 @@ const MyProperties = ({ account, escrow }) => {
     }
   };
 
+  // Render the list of purchased properties
   return (
     <div className="cards__section">
       <h3> My Purchased Properties</h3>
@@ -61,6 +67,8 @@ const MyProperties = ({ account, escrow }) => {
               <div className="card__info">
                 <h4>{home.attributes?.[0]?.value || '?'} ETH</h4>
                 <p>{home.address}</p>
+
+                {/* Display property status */}
                 <PropertyStatus escrow={escrow} home={home} />
               </div>
             </div>
@@ -81,6 +89,7 @@ const PropertyStatus = ({ escrow, home }) => {
   const [inspected, setInspected] = useState(false);
   const [finalized, setFinalized] = useState(false);
 
+  //Fetch inspection and finalization status
   useEffect(() => {
     checkStatus();
   }, []);
@@ -99,6 +108,7 @@ const PropertyStatus = ({ escrow, home }) => {
     }
   };
 
+  //Render status message
   return (
     <p style={{ fontWeight: 'bold', color: '#444' }}>
       {finalized
