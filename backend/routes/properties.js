@@ -1,4 +1,9 @@
-//Handles all API endpoints to create, read, update, delete properties (CRUD)
+/**
+ * properties.js file
+ * Express router for handling property CRUD operations.
+ * Includes endpoints to upload (POST), fetch (GET), update (PUT), and delete (DELETE) properties.
+ * Also manages image uploads using multer.
+ */
 
 const express = require('express');
 const router = express.Router();
@@ -7,7 +12,7 @@ const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
 
-// Configure file storage for property images
+// Configure multer file storage for property images
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/'); //Uploaded images stroed in 'uploads' folder
