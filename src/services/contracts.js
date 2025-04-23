@@ -1,6 +1,6 @@
 /**
  * This file is responsible for connecting to the Ethereum blockchain,
- *loading the deployed smart contracts, and exporting them for use in the application.
+ * loading the deployed smart contracts, and exporting them for use in the application.
  */
 
 // Importing ethers.js library to interact with Ethereum blockchain

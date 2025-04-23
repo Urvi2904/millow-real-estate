@@ -1,3 +1,18 @@
+/**
+ * App.js file
+ *
+ * Main React entry point and routing controller.
+ * Loads smart contracts, initializes user state (wallet & role),
+ * fetches properties from backend, and manages all frontend routes.
+ *
+ * Core responsibilities:
+ * - Loads blockchain data (RealEstate + Escrow contracts)
+ * - Handles login/logout via MetaMask and localStorage
+ * - Fetches + enriches property data with blockchain info
+ * - Controls navigation and role-based page rendering (admin vs user)
+ * - Manages popup toggles for home details
+ */
+
 /* eslint-disable react-hooks/exhaustive-deps */
 //Import libraries
 import { ethers } from 'ethers';
@@ -20,10 +35,12 @@ import MyProperties from './components/myProperties';
 import InspectionPanel from './components/InspectionPanel';
 
 function App() {
+  //Wallet and Role state
   const [account, setAccount] = useState(null); // Current wallet address
   const [userRole, setUserRole] = useState(null); // "admin" or "user"
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Login state
 
+  //Property data state
   const [homes, setHomes] = useState([]); // All properties loaded from backend
   const [home, setHome] = useState(null); // Currently selected property (for popup)
   const [toggle, setToggle] = useState(false); // Toggle popup/modal visibility
@@ -32,13 +49,13 @@ function App() {
   const [loading, setLoading] = useState(true); // Property list loading state
   const [selectedHomeId, setSelectedHomeId] = useState(null); // Currently selected home ID
 
+  //Blockchain smart contract state
   const [provider, setProvider] = useState(null); // Ethereum provider (e.g., MetaMask)
   const [realEstateContract, setRealEstateContract] = useState(null); // NFT contract instance
   const [escrowContract, setEscrowContract] = useState(null); // Escrow contract instance
-
   const [contractsLoaded, setContractsLoaded] = useState(false); // Track if contracts are ready
 
-  // Load wallet info from localStorage
+  // Load wallet information from localStorage
   useEffect(() => {
     const wallet = localStorage.getItem('walletAddress');
     const role = localStorage.getItem('userRole');
@@ -50,7 +67,7 @@ function App() {
     }
   }, []);
 
-  // Load blockchain contracts once user is logged in
+  // Load blockchain smart contracts once user is logged in
   useEffect(() => {
     const tryLoad = async () => {
       if (isLoggedIn) {
@@ -100,7 +117,7 @@ function App() {
       const response = await fetch('http://localhost:5000/api/properties');
       const data = await response.json();
 
-      //Enrich each property with blockchain info
+      //Enrich each property with blockchain information
       const enriched = await Promise.all(
         data.map(async (home) => {
           let buyer = null;
@@ -131,7 +148,7 @@ function App() {
     }
   };
 
-  // Handle login/logout actions
+  // Handle login/logout actions from Login.js
   const handleLogin = () => {
     const wallet = localStorage.getItem('walletAddress');
     const role = localStorage.getItem('userRole');
